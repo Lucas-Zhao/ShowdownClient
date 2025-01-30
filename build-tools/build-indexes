@@ -20,17 +20,19 @@ let noBackendBuild = process.argv.includes("--no-backend-build");
 if (!fs.existsSync(backendRepository)) {
 	// Since we just cloned the backend repository, we have to build it.
 	noBackendBuild = false;
+	console.log("cloning remote repository");
 	child_process.execSync(
-		`git clone https://github.com/iandavis0527/pokemon-showdown.git ${backendRepository}`
+		`git clone https://github.com/iandavis0527/pokemon-showdown.git`
 	);
 } else {
 	console.log("Copying local backend repository into client cache instead of git");
-	fs.cpSync(backendRepository, "caches/pokemon-showdown/", {recursive: true});
+	console.log(path.resolve(backendRepository));
+	fs.cpSync(path.resolve(backendRepository), "caches/pokemon-showdown/", {recursive: true});
 	console.log("copied");
 }
 
 process.stdout.write("Syncing data from Git repository... ");
-child_process.execSync('git pull', {cwd: 'caches/pokemon-showdown'});
+// child_process.execSync('git pull', {cwd: 'caches/pokemon-showdown'});
 child_process.execSync("npm install", {cwd: "caches/pokemon-showdown"});
 child_process.execSync('npm run build', {cwd: 'caches/pokemon-showdown'});
 console.log("DONE");
